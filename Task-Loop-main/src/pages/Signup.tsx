@@ -11,6 +11,7 @@ const Signup = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
@@ -86,6 +87,7 @@ const Signup = () => {
         setUsername("");
         setEmail("");
         setPassword("");
+        setConfirmPassword("");
         setOtp("");
         setIsOtpSent(false);
         setIsOtpVerified(false);
@@ -223,8 +225,8 @@ const Signup = () => {
                   type="password"
                   placeholder="Confirm your password"
                   className="input-dark"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
               </div>
