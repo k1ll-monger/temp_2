@@ -56,9 +56,9 @@ const Signup = () => {
     }
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+  
     if (!isOtpVerified) {
       toast({
         title: "Email verification required",
@@ -67,21 +67,47 @@ const Signup = () => {
       });
       return;
     }
-    
-    toast({
-      title: "Account created!",
-      description: "Your account has been created successfully",
-    });
-    
-    setUsername('');
-    setEmail('');
-    setPassword('');
-    setOtp('');
-    setIsOtpSent(false);
-    setIsOtpVerified(false);
-    
-    navigate('/home');
+  
+    try {
+      const response = await fetch("http://localhost:3000/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        toast({
+          title: "Account created!",
+          description: data.message || "Your account has been created successfully",
+        });
+  
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setOtp("");
+        setIsOtpSent(false);
+        setIsOtpVerified(false);
+  
+        navigate("/home");
+      } else {
+        toast({
+          title: "Signup failed",
+          description: data.message || "Something went wrong",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast({
+        title: "Network error",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
   };
+  
 
   const handleOTPChange = (value: string) => {
     setOtp(value);

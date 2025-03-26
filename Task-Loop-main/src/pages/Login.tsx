@@ -19,24 +19,44 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+  
+    if (!email || !password) {
+      toast({
+        title: "Missing fields",
+        description: "Please enter both email and password",
+        variant: "destructive",
+      });
+      return;
+    }
+  
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+  
       const data = await response.json();
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        toast({ title: 'Login Successful', description: 'Welcome back!' });
-        navigate('/home');
+  
+      if (response.ok && data.success) {
+        toast({ title: "Login Successful", description: "Welcome back!" });
+        navigate(redirect);
       } else {
-        toast({ title: 'Error', description: data.error, variant: 'destructive' });
+        toast({
+          title: "Login Failed",
+          description: data.message || "Invalid credentials",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      toast({ title: 'Error', description: 'Server error', variant: 'destructive' });
+      toast({
+        title: "Network Error",
+        description: "Unable to connect to the server",
+        variant: "destructive",
+      });
     }
   };
+  
 
   return <div className="flex flex-col items-center min-h-screen bg-background">
       <div className="w-full text-center py-12">
