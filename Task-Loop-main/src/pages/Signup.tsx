@@ -20,7 +20,7 @@ const Signup = () => {
 
   const handleSendOTP = (e: React.MouseEvent) => {
     e.preventDefault();
-    
+
     if (!email || !email.includes('@')) {
       toast({
         title: "Invalid email",
@@ -29,24 +29,24 @@ const Signup = () => {
       });
       return;
     }
-    
+
     toast({
       title: "OTP Sent!",
       description: `A verification code has been sent to ${email}`,
     });
-    
+
     setIsOtpSent(true);
   };
 
   const handleVerifyOTP = (e: React.MouseEvent) => {
     e.preventDefault();
-    
+
     if (otp.length === 6) {
       toast({
         title: "OTP Verified!",
         description: "Your email has been verified successfully",
       });
-      
+
       setIsOtpVerified(true);
     } else {
       toast({
@@ -59,7 +59,7 @@ const Signup = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (!isOtpVerified) {
       toast({
         title: "Email verification required",
@@ -68,22 +68,25 @@ const Signup = () => {
       });
       return;
     }
-  
+
     try {
       const response = await fetch("http://localhost:3000/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
       });
-  
+
       const data = await response.json();
-  
-      if (response.ok) {
+
+      if (response.ok && data.success) {
+        // ✅ Save userId to localStorage
+        localStorage.setItem("userId", data.user.id);
+
         toast({
           title: "Account created!",
           description: data.message || "Your account has been created successfully",
         });
-  
+
         setUsername("");
         setEmail("");
         setPassword("");
@@ -91,7 +94,7 @@ const Signup = () => {
         setOtp("");
         setIsOtpSent(false);
         setIsOtpVerified(false);
-  
+
         navigate("/home");
       } else {
         toast({
@@ -109,7 +112,6 @@ const Signup = () => {
       });
     }
   };
-  
 
   const handleOTPChange = (value: string) => {
     setOtp(value);
@@ -120,18 +122,18 @@ const Signup = () => {
       <div className="w-full text-center py-12">
         <h1 className="text-5xl font-bold text-primary">TaskLoop</h1>
       </div>
-      
+
       <div className="w-full max-w-md px-4 md:px-0 mt-8">
         <div className="border-border bg-card p-6 rounded-lg shadow-md space-y-4 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 via-primary to-accent"></div>
-          
+
           <div className="space-y-1">
             <h2 className="text-2xl font-bold text-center">Create an Account</h2>
             <p className="text-center text-muted-foreground text-sm">
               Sign up to start using Task Loop
             </p>
           </div>
-          
+
           <form onSubmit={handleSignup}>
             <div className="grid gap-3">
               <div className="grid gap-1">
@@ -146,7 +148,7 @@ const Signup = () => {
                   required
                 />
               </div>
-              
+
               <div className="grid gap-1">
                 <Label htmlFor="email">Email</Label>
                 <div className="flex gap-2">
@@ -230,7 +232,7 @@ const Signup = () => {
                   required
                 />
               </div>
-              
+
               <Button 
                 type="submit" 
                 className="w-full bg-primary hover:bg-primary/90" 
@@ -238,6 +240,7 @@ const Signup = () => {
               >
                 Sign Up
               </Button>
+
               <div className="flex items-center justify-between mt-1">
                 <Link to="/" className="text-sm text-primary hover:underline">
                   Back to Home
@@ -253,6 +256,7 @@ const Signup = () => {
               </div>
             </div>
           </form>
+
         </div>
       </div>
     </div>
